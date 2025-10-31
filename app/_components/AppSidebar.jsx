@@ -11,6 +11,10 @@ import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import Image from "next/image"
 
+/**
+ * Render the application's sidebar with branding, a theme toggle, a "New Chat" action, a chat section, and an authentication button.
+ * @returns {JSX.Element} The sidebar component tree ready for rendering. 
+ */
 export function AppSidebar() {
     const { theme, setTheme } = useTheme();
     return (
