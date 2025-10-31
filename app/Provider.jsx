@@ -1,5 +1,7 @@
 import React from 'react'
 import { ThemeProvider as NextThemesProvider } from "next-themes"
+import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { AppSidebar } from './_components/AppSidebar'
 
 const Provider = ({
     children,
@@ -11,7 +13,12 @@ const Provider = ({
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
-            {...props}>{children}
+            {...props}>
+            <SidebarProvider>
+                <AppSidebar/>
+                <SidebarTrigger />
+                {children}
+            </SidebarProvider>
         </NextThemesProvider>
     )
 }
