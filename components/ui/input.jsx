@@ -2,6 +2,15 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+/**
+ * A styled input element that composes default utility classes with any provided `className` and forwards remaining props to the underlying input.
+ *
+ * @param {Object} props
+ * @param {string} [props.className] - Extra CSS classes to merge with the component's default classes.
+ * @param {string} [props.type] - Value for the input's `type` attribute (e.g., "text", "email", "password").
+ * @param {...any} [props] - Additional attributes and event handlers forwarded to the input element.
+ * @returns {JSX.Element} The rendered input element.
+ */
 function Input({
   className,
   type,
