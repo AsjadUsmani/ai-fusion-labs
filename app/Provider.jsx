@@ -12,13 +12,13 @@ const Provider = ({
     children,
     ...props
 }) => {
-    const {user} = useUser();
+    const { user } = useUser();
 
-    const createNewUser = async() => {
+    const createNewUser = async () => {
         const userRef = doc(db, 'users', user?.primaryEmailAddress.emailAddress)
         const userDoc = await getDoc(userRef);
-        if(userDoc.exists()){
-            console.log("Existes user.")
+        if (userDoc.exists()) {
+            console.log("Exist user.")
             return;
         } else {
             const userData = {
@@ -27,14 +27,14 @@ const Provider = ({
                 createdAt: new Date(),
                 remainingMsg: 5,
                 plan: 'Free',
-                credits: 1000 
+                credits: 1000
             }
             await setDoc(userRef, userData);
             console.log("New User Data Saved");
         }
     }
     useEffect(() => {
-        if(user){
+        if (user) {
             createNewUser();
         }
     }, [user]);
