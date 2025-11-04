@@ -1,24 +1,32 @@
 'use client'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ThemeProvider as NextThemesProvider } from "next-themes"
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from './_components/AppSidebar'
 import AppHeader from './_components/AppHeader'
 import { useUser } from '@clerk/nextjs'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '@/config/FirebaseConfig'
+import { AiSelectedModelContext } from '@/context/AiSelectedModelContext'
+import { DefaultModel } from '@/shared/AiModelsShared'
+import { userDetailContext } from '@/context/userdetailContext'
 
 const Provider = ({
     children,
     ...props
 }) => {
     const { user } = useUser();
+    const [aiSelectedModel, setAiSelectedModel] = useState(DefaultModel);
+    const [userDetail, setUserDetail] = useState();
 
     const createNewUser = async () => {
         const userRef = doc(db, 'users', user?.primaryEmailAddress.emailAddress)
         const userDoc = await getDoc(userRef);
         if (userDoc.exists()) {
             console.log("Exist user.")
+            const userInfo = userDoc.data();
+            setAiSelectedModel(userInfo?.selectedModelPref);
+            setUserDetail(userInfo);
             return;
         } else {
             const userData = {
@@ -31,6 +39,7 @@ const Provider = ({
             }
             await setDoc(userRef, userData);
             console.log("New User Data Saved");
+            setUserDetail(userData);
         }
     }
     useEffect(() => {
@@ -45,18 +54,22 @@ const Provider = ({
             enableSystem
             disableTransitionOnChange
             {...props}>
-            <SidebarProvider>
-                <div className="flex w-full">
-                    {/* Sidebar on the left */}
-                    <AppSidebar />
+            <userDetailContext.Provider value={{userDetail, setUserDetail}}>
+                <AiSelectedModelContext.Provider value={{ aiSelectedModel, setAiSelectedModel }}>
+                    <SidebarProvider>
+                        <div className="flex w-full">
+                            {/* Sidebar on the left */}
+                            <AppSidebar />
 
-                    {/* Main content on the right */}
-                    <div className="flex flex-col w-full">
-                        <AppHeader />
-                        {children}
-                    </div>
-                </div>
-            </SidebarProvider>
+                            {/* Main content on the right */}
+                            <div className="flex flex-col w-full">
+                                <AppHeader />
+                                {children}
+                            </div>
+                        </div>
+                    </SidebarProvider>
+                </AiSelectedModelContext.Provider>
+            </userDetailContext.Provider>
         </NextThemesProvider>
     )
 }
